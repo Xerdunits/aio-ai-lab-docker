@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+  kohya:
+    build: ./docker
+    container_name: kohya_ui
+    ports:
+      - "7861:7861"
+    volumes:
+      - ../models:/workspace/models
+      - ../datasets:/workspace/datasets
+      - ../output/kohya:/workspace/output
+    command: python3 kohya_gui.py --listen 0.0.0.0 --server_port 7861
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  comfy:
+    image: comfy/comfyui:latest
+    container_name: comfy_ui
+    ports:
+      - "8188:8188"
+    volumes:
+      - ../models:/comfy/models
+      - ../output/comfy:/comfy/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  a1111:
+    image: ghcr.io/automatic1111/stable-diffusion-webui:latest
+    container_name: a1111_webui
+    ports:
+      - "7860:7860"
+    volumes:
+      - ../models:/data/models
+      - ../output/a1111:/data/output
+    environment:
+      CLI_ARGS: "--xformers"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  sdnext:
+    image: sdnext/sdnext:latest
+    container_name: sdnext_ui
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../models:/app/models
+      - ../output/sdnext:/app/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  invoke:
+    image: invokeai/invokeai:latest
+    container_name: invoke_ui
+    ports:
+      - "3000:9090"
+    volumes:
+      - ../models:/invoke/models
+      - ../output/invoke:/invoke/output
+    deploy:
+      resources:
+        reservations:
+          devices: [gpu]
+
+  tensorboard:
+    image: tensorflow/tensorflow:latest
+    container_name: tensorboard
+    ports:
+      - "6006:6006"
+    volumes:
+      - ../tensorboard:/logs
+    command: tensorboard --logdir=/logs --host=0.0.0.0

@@ -1,0 +1,8 @@
+transformers==4.36.2
+diffusers==0.25.1
+accelerate==0.25.0
+scipy
+pillow
+xformers==0.0.23.post1
+tensorboard
+gradio

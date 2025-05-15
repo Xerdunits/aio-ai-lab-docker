@@ -1,0 +1,8 @@
+models/
+datasets/
+output/
+tensorboard/
+__pycache__/
+*.pyc
+*.env
+*.log
